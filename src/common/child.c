@@ -78,14 +78,14 @@ static void forget_child(pid_t pid)
 
 pid_t plp_waitpid (pid_t pid, plp_status_t *statusPtr, int options)
 {
-	int report;
+	int child;
 	memset(statusPtr,0,sizeof(statusPtr[0]));
 	DEBUG2("plp_waitpid: pid %ld, options %d", (long)pid, options );
-	report = waitpid(pid, statusPtr, options );
-	DEBUG2("plp_waitpid: returned %d, status %s", report,
+	child = waitpid(pid, statusPtr, options );
+	DEBUG2("plp_waitpid: returned %d, status %s", child,
 		Decode_status( statusPtr ) );
-	if (report > 0) forget_child(pid);
-	return report;
+	if (child > 0) forget_child(child);
+	return child;
 }
 
 /***************************************************************************
