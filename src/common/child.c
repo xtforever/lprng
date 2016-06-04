@@ -78,7 +78,7 @@ static void forget_child(pid_t pid)
 
 pid_t plp_waitpid (pid_t pid, plp_status_t *statusPtr, int options)
 {
-	int child;
+	pid_t child;
 	memset(statusPtr,0,sizeof(statusPtr[0]));
 	DEBUG2("plp_waitpid: pid %ld, options %d", (long)pid, options );
 	child = waitpid(pid, statusPtr, options );
