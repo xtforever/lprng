@@ -742,6 +742,8 @@ const char *Server_status( int d )
 #ifndef HAVE_STDARGS
     struct job *job;
     char *fmt;
+#else
+    va_list cap;
 #endif
 	char msg_b[SMALLBUFFER];
 	static int insetstatus;
@@ -754,11 +756,18 @@ const char *Server_status( int d )
 	if( Doing_cleanup || fmt == 0 || *fmt == 0 || insetstatus ) return;
 
 	insetstatus = 1;
+#ifdef HAVE_STDARGS
+	va_copy(cap, ap);
+#endif
 	(void) plp_vsnprintf( msg_b, sizeof(msg_b)-4, fmt, ap);
 	DEBUG1("setstatus: msg '%s'", msg_b);
 	if( !Is_server ){
 		if( Verbose || !Is_lpr ){
+#ifdef HAVE_STDARGS
+			(void) plp_vsnprintf(msg_b, sizeof(msg_b)-2, fmt, cap);
+#else
 			(void) plp_vsnprintf(msg_b, sizeof(msg_b)-2, fmt, ap);
+#endif
 			strcat( msg_b,"\n" );
 			if( Write_fd_str( 2, msg_b ) < 0 ) cleanup(0);
 		} else {
@@ -774,6 +783,9 @@ const char *Server_status( int d )
 		send_to_logger( Status_fd, Mail_fd, job, PRSTATUS, msg_b );
 	}
 	insetstatus = 0;
+#ifdef HAVE_STDARGS
+	va_end(cap);
+#endif
 	VA_END;
 }
 
