@@ -1,4 +1,4 @@
-AC_INIT(LPRng,3.8.C,lprng-devel@lists.sf.net)
+AC_INIT(LPRng,3.9.0,lprng-devel@lists.sf.net)
 AC_CONFIG_SRCDIR(src/common/lpr.c)
 AM_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE([foreign])
