@@ -467,6 +467,7 @@ int Print_job( int output, int status_device, struct job *job,
 									continue;
 								}
 							}
+							__attribute__ ((fallthrough));
 						default:
 							Errorcode = n;
 							setstatus(job, "%s filter exit status '%s'",
@@ -747,6 +748,7 @@ static int Run_OF_filter( int send_job_rw_timeout, int *of_pid, int *of_stdin, i
 							continue;
 						}
 					}
+					__attribute__ ((fallthrough));
 				default:
 					Errorcode = n;
 					setstatus(job, "%s filter exit status '%s'",
