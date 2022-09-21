@@ -563,10 +563,10 @@ int Print_job( int output, int status_device, struct job *job,
 
  exit:
 	Init_buf(&Outbuf, &Outmax, &Outlen );
-	if( Outbuf ) free(Outbuf); Outbuf = 0;
-	if(FF_str) free(FF_str);
-	if(leader_str) free(leader_str);
-	if(trailer_str) free(trailer_str);
+	free(Outbuf); Outbuf = 0;
+	free(FF_str);
+	free(leader_str);
+	free(trailer_str);
 	if( of_stdin != -1 ) close(of_stdin); of_stdin = -1;
 	if( of_stderr != -1 ) close(of_stderr); of_stderr = -1;
 	if( tempfd != -1 ) close(tempfd); tempfd = -1;
@@ -823,7 +823,7 @@ static void Print_banner( const char *name, char *pgm, struct job *job )
 		bl = safestrdup2(l.list[0],"\n",__FILE__,__LINE__);
 		Put_buf_str( bl, &Outbuf, &Outmax, &Outlen );
 		Free_line_list(&l);
-		if( bl ) free(bl); bl = 0;
+		free(bl); bl = 0;
 	}
 	if(DEBUGL3){
 		struct stat statb; int i;
