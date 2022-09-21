@@ -337,7 +337,7 @@ void doaction( struct line_list *args )
 			} else {
 				strcpy(msg, "-a" );
 			}
-			if( s ) free(s);
+			free(s);
 			args->list[1] = safestrdup(msg,__FILE__,__LINE__);
 		}
 		if(DEBUGL1)Dump_line_list("ARGS",args);
