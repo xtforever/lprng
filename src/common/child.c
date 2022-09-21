@@ -294,8 +294,8 @@ plp_signal_t cleanup (int passed_signal)
 #if defined(__CYGWIN__)
 	if( getpid() == Server_pid ) {
 		char *path = safestrdup3( Lockfile_DYN,".", Lpd_port_DYN, __FILE__, __LINE__ );
-        unlink(path);
-		if( path ) free(path); path = 0;
+		unlink(path);
+		free(path); path = 0;
 	}
 #endif
 
@@ -356,8 +356,8 @@ static void Dump_unfreed_mem(const char *title)
 	plp_snprintf(buffer,sizeof(buffer), "*** Dump_unfreed_mem: %s, pid %ld\n",
 		title, (long)getpid() );
 	Write_fd_str(dmalloc_outfile_fd, buffer );
-	if(Outbuf) free(Outbuf); Outbuf = 0;
-	if(Inbuf) free(Inbuf); Inbuf = 0;
+	free(Outbuf); Outbuf = 0;
+	free(Inbuf); Inbuf = 0;
 	Clear_tempfile_list();
 	{
 		struct line_list **l;
