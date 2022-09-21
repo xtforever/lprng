@@ -228,7 +228,7 @@ static void Get_subserver_pc( char *printer, struct line_list *subserver_info, i
 	Set_str_value(subserver_info,SPOOLDIR,Spool_dir_DYN);
 	path = Make_pathname( Spool_dir_DYN, Queue_control_file_DYN );
 	Set_str_value(subserver_info,QUEUE_CONTROL_FILE,path);
-	if( path ) free(path); path = 0;
+	free(path); path = 0;
 
 	Update_spool_info( subserver_info );
 
@@ -435,7 +435,7 @@ int Do_queue_jobs( char *name, int subserver )
 		logerr_die(LOG_ERR, _("Do_queue_jobs: cannot open lockfile '%s'"),
 			path ); 
 	}
-	if(path) free(path); path = 0;
+	free(path); path = 0;
 
 	/*
 	This code is very tricky,  and may cause some headaches
@@ -536,7 +536,7 @@ int Do_queue_jobs( char *name, int subserver )
 		if( Setup_printer( savename, buffer, sizeof(buffer), 0 ) ){
 			cleanup(0);
 		}
-		if(savename) free(savename); savename = 0;
+		free(savename); savename = 0;
 
 		master = 1;
 		/* start the queues that need it */
@@ -888,12 +888,12 @@ int Do_queue_jobs( char *name, int subserver )
 							/* get the environment values for the possible server */
 							t = Join_line_list_with_sep(sp,"\n");
 							Set_str_value(&chooser_env,s,t);
-							if( t ) free(t); t = 0;
+							free(t); t = 0;
 							t = Find_str_value( &chooser_env,"PRINTERS" );
 							if( t ){
 								t = safestrdup3(t,",",s,__FILE__,__LINE__);
 								Set_str_value( &chooser_env,"PRINTERS",t );
-								if( t ) free(t); t = 0;
+								free(t); t = 0;
 							} else {
 								Set_str_value( &chooser_env,"PRINTERS",s );
 							}
@@ -1207,8 +1207,8 @@ int Do_queue_jobs( char *name, int subserver )
 				}
 			}
 			if( fd > 0 ) close(fd); fd = -1;
-			if(savename) free(savename); savename = 0;
-			if(save_move_dest) free(save_move_dest); save_move_dest = 0;
+			free(savename); savename = 0;
+			free(save_move_dest); save_move_dest = 0;
 			move_dest = 0;
 			Free_line_list(&new_sp);
 			jobs_printed = 1;
@@ -1250,7 +1250,7 @@ int Do_queue_jobs( char *name, int subserver )
 		s = Join_line_list_with_sep(&tinfo,",");
 		Set_str_value(&Spool_control,SERVER_ORDER,s);
 		Set_spool_control(0, Queue_control_file_DYN, &Spool_control);
-		if(s) free(s); s = 0;
+		free(s); s = 0;
 		Free_line_list(&tinfo);
 	}
 	Free_listof_line_list(&servers);
@@ -1345,7 +1345,7 @@ static int Remote_job( struct job *job, int lpd_bounce, char *move_dest, char *i
 		Set_str_value( &PC_entry_line_list, LP, tempfile );
 		Print_job( tempfd, -1, &jcopy, 0, 0, 0 );
 		Set_str_value( &PC_entry_line_list, LP, old_lp_value );
-		if( old_lp_value ) free(old_lp_value); old_lp_value = 0;
+		free(old_lp_value); old_lp_value = 0;
 
 		if( fstat( tempfd, &statb ) ){
 			logerr(LOG_INFO, "Remote_job: fstatb failed" );
@@ -1555,7 +1555,7 @@ static int Local_job( struct job *job, char *id )
 	Set_str_value( &PC_entry_line_list, LP, Lp_device_DYN );
 	status = Print_job( fd, status_fd, job, Send_job_rw_timeout_DYN, poll_for_status, 0 );
 	Set_str_value( &PC_entry_line_list, LP, old_lp_value );
-	if( old_lp_value ) free(old_lp_value); old_lp_value = 0;
+	free(old_lp_value); old_lp_value = 0;
 	/* we close close device */
 	DEBUG1("Local_job: shutting down fd %d", fd );
 
@@ -2291,7 +2291,7 @@ static void Setup_user_reporting( struct job *job )
 	if( Mail_fd > 0 && prot_num == SOCK_STREAM && Exit_linger_timeout_DYN > 0 ){
 		Set_linger( Mail_fd, Exit_linger_timeout_DYN );
 	}
-	if( host ) free(host); host = 0;
+	free(host); host = 0;
 }
 
 void Service_worker( struct line_list *args, int param_fd UNUSED )
@@ -2334,7 +2334,7 @@ void Service_worker( struct line_list *args, int param_fd UNUSED )
 		logerr_die(LOG_ERR, _("Service_worker: cannot open lockfile '%s'"),
 			path );
 	}
-	if(path) free(path); path = 0;
+	free(path); path = 0;
 	Write_pid( unspooler_fd, pid, (char *)0 );
 	close(unspooler_fd); unspooler_fd = -1;
 
@@ -2668,7 +2668,7 @@ static void Filter_files_in_job( struct job *job, int outfd, char *user_filter )
 		DEBUG3("Filter_files_in_job: finished file");
 	}
  end_of_job:
-	if( old_lp_value ) free( old_lp_value ); old_lp_value = 0;
+	free( old_lp_value ); old_lp_value = 0;
 	Free_line_list(&files);
     if(DEBUGL3){
 		struct stat statb; int i;
@@ -2898,7 +2898,7 @@ static int Move_job(int fd, struct job *job, struct line_list *sp,
 	Free_line_list( &datafiles );
 	Free_job(&jcopy);
 	Remove_tempfiles();
-	if(savename) free(savename); savename = 0;
+	free(savename); savename = 0;
 	if( job_ticket_file_fd > 0 ) close(job_ticket_file_fd); job_ticket_file_fd = -1;
 	if( fail ){
 		setstatus(job, "%s", errmsg);
