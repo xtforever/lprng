@@ -1087,9 +1087,9 @@ static int Do_control_printcap( int *sock )
 	} else {
 		if( Write_fd_str( *sock, "\n" ) < 0 ) cleanup(0);
 	}
-	if( s ) free(s); s = 0;
-	if( t ) free(t); t = 0;
-	if( printcap ) free(printcap); printcap = 0;
+	free(s); s = 0;
+	free(t); t = 0;
+	free(printcap); printcap = 0;
 	return(0);
 }
 
