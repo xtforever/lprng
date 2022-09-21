@@ -215,7 +215,9 @@ static void Get_queue_remove( char *user, int *sock, struct line_list *tokens,
 	for( count = 0; count < Sort_order.count; ++count ){
 		int incoming;
 		Free_job(&job);
-		if( fd > 0 ) close(fd); fd = -1;
+		if( fd > 0 )
+			close(fd);
+		fd = -1;
 		Get_job_ticket_file(&fd, &job, Sort_order.list[count] );
 		DEBUGFC(DLPRM3)Dump_job("Get_queue_remove - info",&job);
 
@@ -287,7 +289,9 @@ static void Get_queue_remove( char *user, int *sock, struct line_list *tokens,
 		++removed;
 		if( tokens->count == 0 ) break;
 	}
-	if( fd > 0 ) close(fd); fd = -1;
+	if( fd > 0 )
+		close(fd);
+	fd = -1;
 	Free_line_list(&info);
 	Free_job(&job);
 	Free_line_list( &Sort_order );
@@ -390,7 +394,8 @@ static void Get_queue_remove( char *user, int *sock, struct line_list *tokens,
 	Free_line_list(&info);
 	Free_line_list(&active_pid);
 	Free_job(&job);
-	if( fd > 0 ) close(fd); fd = -1;
+	if( fd > 0 )
+		close(fd);
 	return;
 }
 
