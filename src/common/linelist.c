@@ -321,7 +321,7 @@ void Free_line_list( struct line_list *l )
 	if( l == 0 ) return;
 	if( l->list ){
 		for( i = 0; i < l->count; ++i ){
-			if( l->list[i] ) free( l->list[i]); l->list[i] = 0;
+			free( l->list[i]); l->list[i] = 0;
 		}
 		free(l->list);
 	}
@@ -562,7 +562,7 @@ void Split( struct line_list *l, const char *str, const char *sep,
 		buffer[len] = 0;
 		Add_line_list( l, buffer, keysep, sort, uniq );
 	}
-	if( buffer ) free(buffer);
+	free(buffer);
 }
 
 char *Join_line_list( struct line_list *l, const char *sep )
@@ -946,7 +946,7 @@ void Set_str_value( struct line_list *l, const char *key, const char *value )
 	if( value && *value ){
 		s = safestrdup3(key,"=",value,__FILE__,__LINE__);
 		Add_line_list(l,s,Hash_value_sep,1,1);
-		if(s) free(s); s = 0;
+		free(s); s = 0;
 	} else if( !Find_first_key(l, key, Hash_value_sep, &mid ) ){
 		Remove_line_list(l,mid);
 	}
@@ -972,7 +972,7 @@ void Set_casekey_str_value( struct line_list *l, const char *key, const char *va
 	if( value && *value ){
 		s = safestrdup3(key,"=",value,__FILE__,__LINE__);
 		Add_casekey_line_list(l,s,Hash_value_sep);
-		if(s) free(s); s = 0;
+		free(s); s = 0;
 	} else if( !Find_first_casekey(l, key, Hash_value_sep, &mid ) ){
 		Remove_line_list(l,mid);
 	}
@@ -1368,7 +1368,7 @@ void Read_fd_and_split( struct line_list *list, int fd,
 	close( fd );
 	DEBUG4("Read_fd_and_split: size %d", size );
 	Split( list, sv, linesep, sort, keysep, uniq, trim, nocomment ,0);
-	if( sv ) free( sv );
+	free( sv );
 }
 
 static void Read_file_and_split( struct line_list *list, char *file,
@@ -1766,7 +1766,7 @@ void Clear_var_list( struct keywords *v, int setv )
         switch( vars->type ){
             case STRING_K:
 				s = ((char **)p)[0];
-				if(s)free(s);
+				free(s);
 				((char **)p)[0] = 0;
 				break;
             case INTEGER_K:
@@ -1873,7 +1873,7 @@ static void Config_value_conversion( struct keywords *key, const char *s )
 	case STRING_K:
 		end = ((char **)p)[0];
 		DEBUG5("Config_value_conversion:  current value '%s'", end );
-		if( end ) free( end );
+		free( end );
 		((char **)p)[0] = 0;
 		while(s && (c=cval(s)) && safestrchr(Option_value_sep,c) ) ++s;
 		end = 0;
@@ -1935,7 +1935,7 @@ void Expand_percent( char **var )
 			len = safestrlen(str) + safestrlen(t);
 			u = str;
 			str = safestrdup3(str,t,s,__FILE__,__LINE__);
-			if(u) free(u); u = 0;
+			free(u); u = 0;
 			s = str+len;
 		} else {
 			++s;
@@ -1979,7 +1979,7 @@ void Expand_hash_values( struct line_list *hash )
 		if( safestrchr( s, '%' ) ){
 			u = safestrdup(s,__FILE__,__LINE__);
 			Expand_percent( &u );
-			if( s ) free(s); s = 0;
+			free(s); s = 0;
 			hash->list[i] = u;
 		}
 	}
@@ -1994,7 +1994,7 @@ char *Set_DYN( char **v, const char *s )
 	char *t = *v;
 	*v = 0;
 	if( s && *s ) *v = safestrdup(s,__FILE__,__LINE__);
-	if( t ) free(t);
+	free(t);
 	return( *v );
 }
 
@@ -2107,9 +2107,9 @@ static void Setup_env_for_process( struct line_list *env, struct job *job )
 		u = safestrdup4(t,(s?"\n :":0),s,"\n",__FILE__,__LINE__);
 		Expand_percent( &u );
 		Set_str_value(env, "PRINTCAP_ENTRY",u);
-		if(s) free(s); s = 0;
-		if(t) free(t); t = 0;
-		if(u) free(u); u = 0;
+		free(s); s = 0;
+		free(t); t = 0;
+		free(u); u = 0;
 	}
 	if( Ppd_file_DYN ){
 		Set_str_value(env, "PPD", Ppd_file_DYN);
@@ -2541,7 +2541,7 @@ int Make_passthrough( char *line, const char *flags, struct line_list *passfd,
 		if( c != '(' ){
 			s = cmd.list[cmd.count-1];
 			s = safestrdup3("( ",s," )",__FILE__,__LINE__);
-			if( cmd.list[cmd.count-1] ) free( cmd.list[cmd.count-1] );
+			free( cmd.list[cmd.count-1] );
 			cmd.list[cmd.count-1] = s;
 		}
 		Fix_dollars(&cmd, job, 1, flags);
@@ -2695,8 +2695,12 @@ int Filter_file( int timeout, int input_fd, int output_fd, const char *error_hea
 	files.count = 0;
 	Free_line_list(&files);
 
-	if( input_fd < 0 ) close(innull_fd); innull_fd = -1;
-	if( output_fd < 0 ) close(outnull_fd); outnull_fd = -1;
+	if( input_fd < 0 )
+		close(innull_fd);
+	innull_fd = -1;
+	if( output_fd < 0 )
+		close(outnull_fd);
+	outnull_fd = -1;
 	if( (close(of_error[1]) == -1 ) ){
 		Errorcode = JFAIL;
 		logerr_die(LOG_INFO, "Filter_file: X8 close(%d) failed",
@@ -2960,9 +2964,9 @@ void Fix_Z_opts( struct job *job )
 			start= safestrdup3(str,(start?",":""),start,
 				__FILE__,__LINE__);
 			Set_str_value(&job->info, buffer, start );
-			if( start ) free(start); start = 0;
+			free(start); start = 0;
 		}
-		if( str ) free(str); str = 0;
+		free(str); str = 0;
 	}
 	str = Find_str_value( &job->info,"Z" );
 	DEBUG4("Fix_Z_opts: after Prefix_option_to_option '%s'", str );
@@ -3002,14 +3006,14 @@ void Fix_Z_opts( struct job *job )
 		s = safestrdup3(str,",",Append_Z_DYN,__FILE__,__LINE__);
 		Set_str_value(&job->info,"Z",s);
 		str = Find_str_value(&job->info,"Z");
-		if(s) free(s); s = 0;
+		free(s); s = 0;
 	}
 	DEBUG4("Fix_Z_opts: after append '%s'", str );
 	if( Prefix_Z_DYN && *Prefix_Z_DYN ){
 		s = safestrdup3(Prefix_Z_DYN,",",str,__FILE__,__LINE__);
 		Set_str_value(&job->info,"Z",s);
 		str = Find_str_value(&job->info,"Z");
-		if(s) free(s); s = 0;
+		free(s); s = 0;
 	}
 	DEBUG4("Fix_Z_opts: after Prefix_Z '%s'", str );
 	for( s = safestrchr(str,','); s; s = strchr(s,',') ){
@@ -3105,7 +3109,7 @@ void Fix_dollars( struct line_list *l, struct job *job, int nosplit, const char 
 					position = safestrlen(strv);
 					l->list[count] = strv
 						 = safeextend3(strv,flags,rest,__FILE__,__LINE__);
-					if( rest ) free(rest); rest = 0;
+					free(rest); rest = 0;
 				}
 				continue;
 			} else if( c == '{' ){
@@ -3229,7 +3233,7 @@ void Fix_dollars( struct line_list *l, struct job *job, int nosplit, const char 
 					l->list[count] = strv
 						 = safeextend4(strv,str,tag,rest,__FILE__,__LINE__);
 				}
-				if( rest ) free(rest); rest = 0;
+				free(rest); rest = 0;
 			} else {
 				memmove(strv+position,rest,safestrlen(rest)+1);
 			}
