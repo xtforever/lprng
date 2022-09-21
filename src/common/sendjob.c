@@ -177,7 +177,7 @@ int Send_job( struct job *job, struct job *logjob,
 	}
 	save_host = safestrdup(RemoteHost_DYN,__FILE__,__LINE__);
 	Set_DYN(&RemoteHost_DYN, real_host );
-	if( real_host ) free( real_host );
+	free( real_host );
 	setstatus(logjob, "connected to '%s'", RemoteHost_DYN );
 
 	if( security && security->client_connect ){
