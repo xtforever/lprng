@@ -291,7 +291,9 @@ int Print_job( int output, int status_device, struct job *job,
 		plp_snprintf(filter_title,sizeof(filter_title), "%s filter '%s'",
 			filter_name, msg );
 
-		if( fd >= 0 ) close(fd); fd = -1;
+		if( fd >= 0 )
+			close(fd);
+		fd = -1;
 		if( !Is_server && openname == 0 ){
 			fd = 0;
 			DEBUG3("Print_job: taking file from STDIN" );
@@ -567,10 +569,18 @@ int Print_job( int output, int status_device, struct job *job,
 	free(FF_str);
 	free(leader_str);
 	free(trailer_str);
-	if( of_stdin != -1 ) close(of_stdin); of_stdin = -1;
-	if( of_stderr != -1 ) close(of_stderr); of_stderr = -1;
-	if( tempfd != -1 ) close(tempfd); tempfd = -1;
-	if( fd != -1 ) close(fd); fd = -1;
+	if( of_stdin != -1 )
+		close(of_stdin);
+	of_stdin = -1;
+	if( of_stderr != -1 )
+		close(of_stderr);
+	of_stderr = -1;
+	if( tempfd != -1 )
+		close(tempfd);
+	tempfd = -1;
+	if( fd != -1 )
+		close(fd);
+	fd = -1;
 	if(DEBUGL3){
 		LOGDEBUG("Print_job: at end open fd's");
 		for( i = 0; i < 20; ++i ){
