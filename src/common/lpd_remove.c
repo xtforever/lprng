@@ -113,7 +113,7 @@ int Job_remove( int *sock, char *input )
 	if( Write_fd_str( *sock, error ) < 0 ) cleanup(0);
  done:
 	DEBUGF(DLPRM2)( "Job_remove: done" );
-	if( user ) free(user); user = 0;
+	free(user); user = 0;
 	Free_line_list(&done_list);
 	Free_line_list(&tokens);
 	return( 0 );
