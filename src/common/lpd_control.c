@@ -164,7 +164,8 @@ int Job_control( int *sock, char *input )
 				"Server", "Subserver", "Redirect", "Status/(Debug)","" );
 			safestrncat(error,"\n");
 			if( Write_fd_str( *sock, error ) < 0 ) cleanup(0);
-		case OP_STOP:
+			__attribute__ ((fallthrough));
+	        case OP_STOP:
 		case OP_START:
 		case OP_DISABLE:
 		case OP_ENABLE:
@@ -357,6 +358,7 @@ static void Do_queue_control( char *user, int action, int *sock,
 	case OP_ENABLE: Set_flag_value(&Spool_control,SPOOLING_DISABLED, 0); break;
 	case OP_ABORT:
 		Set_flag_value(&Spool_control,PRINTING_ABORTED, 1);
+		__attribute__ ((fallthrough));
 	case OP_KILL:
 		signal_server = SIGINT;
 		break;
@@ -379,6 +381,7 @@ static void Do_queue_control( char *user, int action, int *sock,
 	case OP_TOPQ:
 		Set_flag_value(&Spool_control,PRINTING_ABORTED, 0);
 		Set_flag_value(&Spool_control,PRINTING_DISABLED, 0);
+		__attribute__ ((fallthrough));
 	case OP_HOLD:
 		if( Do_job_ticket_file( action, sock,
 			tokens, error, errorlen, 0 ) ){
@@ -627,7 +630,9 @@ static int Do_job_ticket_file( int action, int *sock,
 		/*
 		 * check to see if this entry matches any of the patterns
 		 */
-		if( fd > 0 ) close(fd); fd = -1;
+		if( fd > 0 )
+			close(fd);
+		fd = -1;
 		Free_job(&job);
 		Get_job_ticket_file( &fd, &job, Sort_order.list[i] );
 		DEBUGFC(DCTRL2)Dump_job("Do_job_ticket_file - getting info",&job);
@@ -754,7 +759,9 @@ static int Do_job_ticket_file( int action, int *sock,
 			goto next_dest;
 		}
 	}
-	if( fd > 0 ) close(fd); fd = -1;
+	if( fd > 0 )
+		close(fd);
+	fd = -1;
 	Free_job(&job);
 	Free_line_list(&Sort_order);
 	Free_line_list(&l);
