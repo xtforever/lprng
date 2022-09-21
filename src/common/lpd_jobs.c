@@ -353,8 +353,12 @@ static char *Make_temp_copy( char *srcfile, char *destdir )
 	if( fail ){
 		unlink(path); path = 0;
 	}
-	if( srcfd >= 0 ) close(srcfd); srcfd = -1;
-	if( destfd >= 0 ) close(destfd); destfd = -1;
+	if( srcfd >= 0 )
+		close(srcfd);
+	srcfd = -1;
+	if( destfd >= 0 )
+		close(destfd);
+	destfd = -1;
 	return( path );
 }
 
@@ -408,7 +412,9 @@ int Do_queue_jobs( char *name, int subserver )
 	DEBUG1("Do_queue_jobs: begin name '%s'", Printer_DYN );
 	tempfile = 0;
 	Free_listof_line_list( &servers );
-	if( lock_fd != -1 ) close( lock_fd ); lock_fd = -1;
+	if( lock_fd != -1 )
+		close( lock_fd );
+	lock_fd = -1;
 
 	Errorcode = JABORT;
 	/* you need to have a spool queue */
@@ -588,7 +594,9 @@ int Do_queue_jobs( char *name, int subserver )
 	fd = -1;
 	for( i = 0; i < Sort_order.count; ++i ){
 		/* fix up the sort stuff */
-		if( fd > 0 ) close(fd); fd = -1;
+		if( fd > 0 )
+			close(fd);
+		fd = -1;
 		Free_job(&job);
 		Get_job_ticket_file(&fd, &job,Sort_order.list[i] );
 		if( !job.info.count ) continue;
@@ -616,20 +624,20 @@ int Do_queue_jobs( char *name, int subserver )
 		}
 		if( mod ) Set_job_ticket_file(&job, 0, fd );
 	}
-	if( fd > 0 ) close(fd); fd = -1;
-
-
-	Free_job(&job);
-
-	check_for_done = 1;
-	
+	if( fd > 0 )
+		close(fd);
 	fd = -1;
+	Free_job(&job);
+	check_for_done = 1;
+
 	while(1){
 		DEBUG1( "Do_queue_jobs: MAIN LOOP" );
 		if(DEBUGL4){ int fdx; fdx = dup(0);
 		LOGDEBUG("Do_queue_jobs: MAIN LOOP next fd %d",fdx); close(fdx); };
 		Unlink_tempfiles();
-		if( fd > 0 ) close(fd); fd = -1;
+		if( fd > 0 )
+			close(fd);
+		fd = -1;
 
 		/* check for changes to spool control information */
 		plp_unblock_all_signals( &oblock );
@@ -716,7 +724,9 @@ int Do_queue_jobs( char *name, int subserver )
 		fd = -1;
 		for( job_index = 0; job_to_do < 0 && job_index < Sort_order.count;
 			++job_index ){
-			if( fd > 0 ) close(fd); fd = -1;
+			if( fd > 0 )
+				close(fd);
+			fd = -1;
 
 			/*
 			 * This is a very special case:
@@ -941,9 +951,11 @@ int Do_queue_jobs( char *name, int subserver )
 					fatal(LOG_ERR,"Do_queue_jobs: 'chooser_routine' select and no routine defined");
 #endif
 				} else if( Chooser_DYN ){
-					if( in_tempfd > 0 ) close( in_tempfd ); in_tempfd = -1;
-					if( out_tempfd > 0 ) close( out_tempfd ); out_tempfd = -1;
+					if( in_tempfd > 0 )
+						close( in_tempfd );
 					in_tempfd = Make_temp_fd(0);
+					if( out_tempfd > 0 )
+						close( out_tempfd );
 					out_tempfd = Make_temp_fd(0);
 					s = Find_str_value( &chooser_env,"PRINTERS" );
 					if( s && (Write_fd_str( in_tempfd, s ) < 0 
@@ -1017,8 +1029,12 @@ int Do_queue_jobs( char *name, int subserver )
 						}
 					}
 				}
-				if( in_tempfd >= 0 ) close( in_tempfd ); in_tempfd = -1;
-				if( out_tempfd >= 0 ) close( out_tempfd ); out_tempfd = -1;
+				if( in_tempfd >= 0 )
+					close( in_tempfd );
+				in_tempfd = -1;
+				if( out_tempfd >= 0 )
+					close( out_tempfd );
+				out_tempfd = -1;
 				Free_line_list( &chooser_env );
 				Free_line_list( &chooser_list );
 			}
@@ -1030,13 +1046,17 @@ int Do_queue_jobs( char *name, int subserver )
 
 		if( job_to_do < 0 && !working && chooser_did_not_find_server == 0 ){
 			DEBUG1("Do_queue_jobs: nothing to do");
-			if( fd > 0 ) close(fd); fd = -1;
+			if( fd > 0 )
+				close(fd);
+			fd = -1;
 			break;
 		}
 
 		/* now we see if we have to wait */ 
 		if( use_subserver < 0 ){
-			if( fd > 0 ) close(fd); fd = -1;
+			if( fd > 0 )
+				close(fd);
+			fd = -1;
 			if( chooser_did_not_find_server ){
 				setstatus(0, "chooser did not find subserver, waiting %d sec",
 					Chooser_interval_DYN );
@@ -1103,7 +1123,8 @@ int Do_queue_jobs( char *name, int subserver )
 			DEBUG1("Do_queue_jobs: trimming status file '%s'/'%s'", Spool_dir_DYN, Status_file_DYN );
 			fd = Trim_status_file( -1, Status_file_DYN, Max_status_size_DYN,
 				Min_status_size_DYN );
-			if( fd > 0 ) close(fd); fd = -1;
+			if( fd > 0 )
+				close(fd);
 		}
 
 		/*
@@ -1120,7 +1141,9 @@ int Do_queue_jobs( char *name, int subserver )
 				pid = Fork_subserver( &servers, use_subserver, 0 );
 			}
 			jobs_printed = 1;
-			if( fd > 0 ) close(fd); fd = -1;
+			if( fd > 0 )
+				close(fd);
+			fd = -1;
 			continue;
 		} else if( move_dest ){
 			/*
@@ -1158,7 +1181,9 @@ int Do_queue_jobs( char *name, int subserver )
 				Set_str_value(&tinfo,HF_NAME,hf_name);
 				Set_str_value(&tinfo,NEW_DEST,new_dest);
 				Set_str_value(&tinfo,MOVE_DEST,move_dest);
-				if( fd > 0 ) close(fd); fd = -1;
+				if( fd > 0 )
+					close(fd);
+				fd = -1;
 				if( (pid = Fork_subserver( &servers, 0, &tinfo )) < 0 ){
 					setstatus( &job, _("sleeping, waiting for processes to exit"));
 					plp_sleep(1);
@@ -1206,7 +1231,9 @@ int Do_queue_jobs( char *name, int subserver )
 					}
 				}
 			}
-			if( fd > 0 ) close(fd); fd = -1;
+			if( fd > 0 )
+				close(fd);
+			fd = -1;
 			free(savename); savename = 0;
 			free(save_move_dest); save_move_dest = 0;
 			move_dest = 0;
@@ -1231,7 +1258,9 @@ int Do_queue_jobs( char *name, int subserver )
 			}
 			jobs_printed = 1;
 		}
-		if( fd > 0 ) close(fd); fd = -1;
+		if( fd > 0 )
+			close(fd);
+		fd = -1;
 	}
 
 	/* now we reset the server order */
@@ -1572,8 +1601,12 @@ static int Local_job( struct job *job, char *id )
 				0, 0, Status_file_DYN );
 		}
 	}
-	if( fd > 0 ) close( fd ); fd = -1;
-	if( status_fd > 0 ) close( status_fd ); status_fd = -1;
+	if( fd > 0 )
+		close( fd );
+	fd = -1;
+	if( status_fd > 0 )
+		close( status_fd );
+	status_fd = -1;
 	if( pid > 0 ){
 		setstatus(job, "waiting for printer filter to exit");
 		status = Wait_for_pid( pid, "LP", 0, Send_job_rw_timeout_DYN );
@@ -1591,8 +1624,12 @@ static int Local_job( struct job *job, char *id )
 	setstatus(job, "finished '%s', status '%s'", id, Server_status(status));
 
  exit:
-	if( fd != -1 ) close(fd); fd = -1;
-	if( status_fd != -1 ) close(status_fd); status_fd = -1;
+	if( fd != -1 )
+		close(fd);
+	fd = -1;
+	if( status_fd != -1 )
+		close(status_fd);
+	status_fd = -1;
 	return( status );
 }
 
@@ -1665,10 +1702,14 @@ static void Wait_for_subserver( int timeout, int pid_to_wait_for, struct line_li
 	fd = -1;
  again:
 	DEBUG1("Wait_for_subserver: pid_to_wait_for %d, flags %d", pid_to_wait_for, flags );
-	if( fd > 0 ) close(fd); fd = -1;
+	if( fd > 0 )
+		close(fd);
+	fd = -1;
 	while( (pid = plp_waitpid( pid_to_wait_for, &procstatus, flags )) > 0 ){
 		++done;
-		if( fd > 0 ) close(fd); fd = -1;
+		if( fd > 0 )
+			close(fd);
+		fd = -1;
 		DEBUG1("Wait_for_subserver: pid %ld, status '%s'", (long)pid,
 			Decode_status(&procstatus));
 		if( WIFSIGNALED( procstatus ) ){
@@ -1709,7 +1750,9 @@ static void Wait_for_subserver( int timeout, int pid_to_wait_for, struct line_li
 		if(DEBUGL4) Dump_subserver_info("Wait_for_subserver", servers );
 
 		for( found = i = 0; !found && i < servers->count; ++i ){
-			if( fd > 0 ) close(fd); fd = -1;
+			if( fd > 0 )
+				close(fd);
+			fd = -1;
 			sp = (void *)servers->list[i];
 			if( pid == Find_flag_value(sp,SERVER) ){
 				DEBUG3("Wait_for_subserver: found %ld", (long)pid );
@@ -1742,7 +1785,9 @@ static void Wait_for_subserver( int timeout, int pid_to_wait_for, struct line_li
 				}
 			}
 		}
-		if( fd > 0 ) close(fd); fd = -1;
+		if( fd > 0 )
+			close(fd);
+		fd = -1;
 		Free_job(&job);
 		/* sort server order */
 		if( Mergesort( servers->list+1, servers->count-1,
@@ -1754,7 +1799,9 @@ static void Wait_for_subserver( int timeout, int pid_to_wait_for, struct line_li
 			"Wait_for_subserver: after sorting", servers );
 		if( pid_to_wait_for != -1 ) break;
 	}
-	if( fd > 0 ) close(fd); fd = -1;
+	if( fd > 0 )
+		close(fd);
+	fd = -1;
 	if( !done ){
 		if( pid_to_wait_for != -1){
 			Errorcode = JABORT;
@@ -2363,7 +2410,9 @@ void Service_worker( struct line_list *args, int param_fd UNUSED )
 			_("Service_worker: cannot update job ticket file for '%s'"), 
 			hf_name );
 	}
-	if( fd > 0 ) close(fd); fd = -1;
+	if( fd > 0 )
+		close(fd);
+	fd = -1;
 
 	id = Find_str_value(&job.info,IDENTIFIER);
 	if( !id ){
@@ -2627,8 +2676,12 @@ static void Filter_files_in_job( struct job *job, int outfd, char *user_filter )
 			files.count = 0;
 			Free_line_list(&files);
 
-			if( fd > 0 ) close(fd); fd = -1;
-			if( tempfd > 0 ) close(tempfd); tempfd = -1;
+			if( fd > 0 )
+				close(fd);
+			fd = -1;
+			if( tempfd > 0 )
+				close(tempfd);
+			tempfd = -1;
 			if( (close(if_error[1]) == -1 ) ){
 				Errorcode = JFAIL;
 				logerr_die(LOG_INFO, "Filter_files_in_job: X5 close(%d) failed",
@@ -2720,7 +2773,9 @@ int Remove_done_jobs( void )
 	for( job_index = 0; job_index < Sort_order.count; ++job_index ){
 		char *job_ticket_file = Sort_order.list[job_index];
 		Free_job(&job);
-		if( fd > 0 ) close(fd); fd = -1;
+		if( fd > 0 )
+			close(fd);
+		fd = -1;
 		if( ISNULL(job_ticket_file) ) continue;
 		DEBUG3("Remove_done_jobs: done_jobs - job_index [%d] '%s'", job_index,
 			job_ticket_file);
@@ -2762,7 +2817,9 @@ int Remove_done_jobs( void )
 			Set_str_value(&info, tval, job_ticket_file );
 		}
 	}
-	if( fd > 0 ) close(fd); fd = -1;
+	if( fd > 0 )
+		close(fd);
+	fd = -1;
 
 	if(DEBUGL1)Dump_line_list("Remove_done_jobs - removal candidates",&info);
 	DEBUG1( "Remove_done_jobs: checking for removal - remove_count %d", Done_jobs_DYN );
@@ -2781,7 +2838,9 @@ int Remove_done_jobs( void )
 		Free_job(&job);
 		Get_job_ticket_file( &fd, &job, job_ticket_file );
 		Remove_job( &job );
-		if( fd > 0 ) close(fd); fd = -1;
+		if( fd > 0 )
+			close(fd);
+		fd = -1;
 		removed = 1;
 	}
 	Free_job(&job);
@@ -2899,7 +2958,9 @@ static int Move_job(int fd, struct job *job, struct line_list *sp,
 	Free_job(&jcopy);
 	Remove_tempfiles();
 	free(savename); savename = 0;
-	if( job_ticket_file_fd > 0 ) close(job_ticket_file_fd); job_ticket_file_fd = -1;
+	if( job_ticket_file_fd > 0 )
+		close(job_ticket_file_fd);
+	job_ticket_file_fd = -1;
 	if( fail ){
 		setstatus(job, "%s", errmsg);
 		Set_nz_flag_value(&job->info,ERROR_TIME,time(0));
