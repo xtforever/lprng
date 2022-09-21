@@ -471,8 +471,12 @@ int Receive_job( int *sock, char *input )
 
  error:
 
-	if( temp_fd > 0 ) close(temp_fd); temp_fd = -1;
-	if( fifo_fd > 0 ) close(fifo_fd); fifo_fd = -1;
+	if( temp_fd > 0 )
+		close(temp_fd);
+	temp_fd = -1;
+	if( fifo_fd > 0 )
+		close(fifo_fd);
+	fifo_fd = -1;
 
 	Remove_tempfiles();
 	if( error[0] ){
@@ -940,8 +944,12 @@ int Scan_block_file( int fd, char *error, int errlen, struct line_list *header_i
 		Remove_tempfiles();
 		Remove_job( &job );
 	}
-	if( job_ticket_fd > 0 ) close(job_ticket_fd); job_ticket_fd = -1;
-	if( tempfd > 0 ) close(tempfd); tempfd = -1;
+	if( job_ticket_fd > 0 )
+		close(job_ticket_fd);
+	job_ticket_fd = -1;
+	if( tempfd > 0 )
+		close(tempfd);
+	tempfd = -1;
 	Free_line_list(&l);
 	Free_line_list(&info);
 	Free_line_list(&files);
