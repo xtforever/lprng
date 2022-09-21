@@ -215,7 +215,7 @@ int Receive_job( int *sock, char *input )
 			logerr_die(LOG_ERR, _("Receive_job: cannot lock lockfile '%s'"),
 				path ); 
 		}
-		if(path) free(path); path = 0;
+		free(path); path = 0;
 	}
 
 	while( status == 0 ){
@@ -1194,7 +1194,7 @@ int Check_for_missing_files( struct job *job, struct line_list *files,
 			&& (t = safestrchr(FQDNRemote_FQDN,'.')) ){
 			s = safestrdup2(fromhost, t, __FILE__,__LINE__ );
 			Set_str_value(&job->info,FROMHOST,s);
-			if( s ) free(s); s = 0;
+			free(s); s = 0;
 			fromhost = Find_str_value(&job->info,FROMHOST);
 		}
 	}
@@ -1226,7 +1226,7 @@ int Check_for_missing_files( struct job *job, struct line_list *files,
 	if( isdigit(cval(file_hostname)) ){
 		char * s = safestrdup2("ADDR",file_hostname,__FILE__,__LINE__);
 		Set_str_value(&job->info,FILE_HOSTNAME,s);
-		if( s ) free(s); s = 0;
+		free(s); s = 0;
 	} else {
 		Set_str_value(&job->info,FILE_HOSTNAME,file_hostname);
 	}
@@ -1679,7 +1679,7 @@ static int Get_route( struct job *job, char *error, int errlen )
 				plp_snprintf(buffer,sizeof(buffer), ".%d",count+1);
 				s = safestrdup2(id,buffer,__FILE__,__LINE__);
 				Set_str_value(&job->destination,IDENTIFIER,s);
-				if(s) free(s);
+				free(s);s=0;
 				Update_destination(job);
 				++count;
 			}
@@ -1699,7 +1699,7 @@ static int Get_route( struct job *job, char *error, int errlen )
 		plp_snprintf(buffer,sizeof(buffer), ".%d",count+1);
 		s = safestrdup2(id,buffer,__FILE__,__LINE__);
 		Set_str_value(&job->destination,IDENTIFIER,s);
-		if(s) free(s);
+		free(s);s=0;
 		Update_destination(job);
 		++count;
 	}
@@ -1777,10 +1777,10 @@ static void Generate_control_file( struct job *job )
 
 	DEBUGF(DRECV1)("Generate_control_file: datafiles '%s'", datafiles );
 	Set_str_value(&job->info,DATAFILES,datafiles);
-	if( datafiles ) free(datafiles); datafiles = 0;
+	free(datafiles); datafiles = 0;
 
 	DEBUGF(DRECV1)("Generate_control_file: cf start '%s'", cf );
 	Set_str_value(&job->info,CF_OUT_IMAGE,cf);
 	Free_line_list( &dups );
-	if( cf ) free(cf); cf = 0;
+	free(cf); cf = 0;
 }
