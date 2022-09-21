@@ -188,7 +188,8 @@ int Do_accounting( int end, char *command, struct job *job, int timeout )
 			}
 		}
 	}
-	if( tempfd > 0 ) close(tempfd); tempfd = -1;
+	if( tempfd > 0 )
+		close(tempfd); 
 	Free_line_list(&args);
 	DEBUG2("Do_accounting: status %s", Server_status(err) );
 	return( err );
