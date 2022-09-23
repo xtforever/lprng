@@ -1709,7 +1709,7 @@ int Trim_status_file( int status_fd, char *file, int max, int min )
 			unlink(tempfile);
 			close(status);
 		}
-		close( tempfd );
+		if (tempfd >0) close( tempfd );
 		if( status_fd > 0 ) close( status_fd );
 		status_fd = Checkwrite( file, &statb,0,0,0);
 	}
@@ -1723,7 +1723,7 @@ int Trim_status_file( int status_fd, char *file, int max, int min )
  *  in the control file.  A * puts all unspecified options there
  ********************************************************************/
 
- static char BSD_order[] = "HPJCLIMWT1234" ;
+ static char BSD_order[]      = "HPJCLIMWT1234" ;
  static char LPRng_order[] = "HPJCLIMWT1234*" ;
 
 char *Fix_datafile_infox( struct job *job, const char *number, const char *suffix,
